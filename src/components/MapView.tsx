@@ -22,6 +22,7 @@ interface MapViewProps {
 
 export default function MapView({ issues }: MapViewProps) {
   const [isClient, setIsClient] = useState(false);
+  const [mapReady, setMapReady] = useState(false);
   const mapRef = useRef<any>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<any[]>([]);
@@ -55,6 +56,7 @@ export default function MapView({ issues }: MapViewProps) {
       });
       mapRef.current = map;
       initializedRef.current = true;
+      setMapReady(true);
 
       // Add tile layer
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -80,7 +82,7 @@ export default function MapView({ issues }: MapViewProps) {
 
   // Update markers when issues change (without recreating the map)
   useEffect(() => {
-    if (!mapRef.current || !isClient) return;
+    if (!mapRef.current || !isClient || !mapReady) return;
 
     const updateMarkers = async () => {
       const L = (await import('leaflet')).default;
@@ -184,7 +186,7 @@ export default function MapView({ issues }: MapViewProps) {
     };
 
     updateMarkers();
-  }, [issues, isClient]);
+  }, [issues, isClient, mapReady]);
 
   if (!isClient) {
     return (
