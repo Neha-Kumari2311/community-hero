@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   eslint: {
     // Warnings don't block builds; only actual runtime errors matter
     ignoreDuringBuilds: true,
