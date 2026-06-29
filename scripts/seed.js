@@ -3,8 +3,14 @@ globalThis.crypto = crypto;
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-// MongoDB connection
-const MONGODB_URI = 'mongodb+srv://nehakumari11331:neha%233816@cluster0.ckrkklj.mongodb.net/community-hero?retryWrites=true&w=majority&appName=Cluster0';
+// MongoDB connection - reads from environment variable
+require('dotenv').config({ path: '.env.local' });
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI) {
+  console.error('❌ MONGODB_URI not found. Make sure .env.local exists with MONGODB_URI set.');
+  process.exit(1);
+}
 
 // Schemas (inline for script)
 const UserSchema = new mongoose.Schema({
