@@ -8,6 +8,7 @@ export interface IIssue {
   severity: string;
   status: string;
   images: string[];
+  videos: string[];
   location: {
     address: string;
     lat: number;
@@ -31,6 +32,8 @@ export interface IIssue {
     createdAt: Date;
   }[];
   verifiedBy: mongoose.Types.ObjectId[];
+  resolvedVotes: mongoose.Types.ObjectId[];
+  region: string;
   assignedTo: string;
   resolvedAt: Date | null;
   createdAt: Date;
@@ -81,6 +84,10 @@ const IssueSchema = new Schema<IIssue>(
       type: [String],
       default: [],
     },
+    videos: {
+      type: [String],
+      default: [],
+    },
     location: {
       address: { type: String, required: true },
       lat: { type: Number, required: true },
@@ -110,6 +117,11 @@ const IssueSchema = new Schema<IIssue>(
       },
     ],
     verifiedBy: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    resolvedVotes: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    region: {
+      type: String,
+      default: '',
+    },
     assignedTo: {
       type: String,
       default: '',
@@ -127,6 +139,7 @@ const IssueSchema = new Schema<IIssue>(
 // Index for geospatial queries
 IssueSchema.index({ 'location.lat': 1, 'location.lng': 1 });
 IssueSchema.index({ category: 1, status: 1 });
+IssueSchema.index({ region: 1, createdAt: -1 });
 IssueSchema.index({ createdAt: -1 });
 
 const Issue = models.Issue || mongoose.model<IIssue>('Issue', IssueSchema);

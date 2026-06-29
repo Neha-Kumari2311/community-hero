@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
 import {
   FiThumbsUp, FiCheckCircle, FiMapPin, FiClock, FiSend,
-  FiCpu, FiArrowLeft, FiAlertTriangle
+  FiCpu, FiArrowLeft, FiAlertTriangle, FiTrash2, FiArchive
 } from 'react-icons/fi';
 
 export default function IssueDetailPage() {
@@ -18,6 +18,7 @@ export default function IssueDetailPage() {
   const [loading, setLoading] = useState(true);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const fetchIssue = async () => {
     try {
@@ -55,11 +56,16 @@ export default function IssueDetailPage() {
   const handleVerify = async () => {
     if (!session) { toast.error('Please login'); return; }
     try {
-      await fetch(`/api/issues/${params.id}`, {
+      const res = await fetch(`/api/issues/${params.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'verify' }),
       });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to verify');
+        return;
+      }
       fetchIssue();
       toast.success('✅ Verified! +5 points');
     } catch { toast.error('Failed'); }
@@ -87,14 +93,54 @@ export default function IssueDetailPage() {
   const handleStatusChange = async (newStatus: string) => {
     if (!session) return;
     try {
-      await fetch(`/api/issues/${params.id}`, {
+      const res = await fetch(`/api/issues/${params.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ action: 'status', status: newStatus }),
       });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || 'Failed to update');
+        return;
+      }
       fetchIssue();
-      toast.success(`Status updated to ${newStatus}`);
+      if (newStatus === 'resolved') {
+        toast.success('✅ Vote recorded! +5 points');
+      } else {
+        toast.success(`Status updated to ${newStatus}`);
+      }
     } catch { toast.error('Failed'); }
+  };
+
+  const handleDelete = async () => {
+    if (!session) { toast.error('Please login'); return; }
+    
+    const confirmMsg = issue.status === 'resolved' 
+      ? 'Close and archive this resolved issue?' 
+      : 'Are you sure you want to delete this issue? This cannot be undone.';
+    
+    if (!confirm(confirmMsg)) return;
+
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/issues/${params.id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        if (data.action === 'closed') {
+          toast.success('🗄️ Issue closed and archived');
+          fetchIssue();
+        } else {
+          toast.success('🗑️ Issue deleted successfully');
+          router.push('/issues');
+        }
+      } else {
+        toast.error(data.error || 'Failed to delete');
+      }
+    } catch { toast.error('Failed to delete issue'); }
+    finally { setDeleting(false); }
   };
 
   if (loading) {
@@ -174,24 +220,36 @@ export default function IssueDetailPage() {
               </button>
             </div>
 
-            {/* Status Update */}
-            {session && (
+            {/* Vote Resolved */}
+            {session && issue.status !== 'resolved' && (
               <div className="mt-4 pt-4 border-t">
-                <label className="text-sm font-medium text-gray-700 mb-2 block">Update Status:</label>
-                <div className="flex flex-wrap gap-2">
-                  {['reported', 'verified', 'in_progress', 'resolved'].map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => handleStatusChange(s)}
-                      className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
-                        issue.status === s
-                          ? 'bg-green-600 text-white border-green-600'
-                          : 'bg-white text-gray-600 border-gray-300 hover:border-green-500'
-                      }`}
-                    >
-                      {s.replace('_', ' ')}
-                    </button>
-                  ))}
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-sm font-medium text-gray-700">Mark as Resolved:</label>
+                  <span className="text-xs text-gray-500">
+                    {issue.resolvedVotes?.length || 0}/3 votes needed
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                  <div
+                    className="bg-green-600 h-2 rounded-full transition-all"
+                    style={{ width: `${Math.min((issue.resolvedVotes?.length || 0) / 3 * 100, 100)}%` }}
+                  ></div>
+                </div>
+                <button
+                  onClick={() => handleStatusChange('resolved')}
+                  className="w-full text-sm px-4 py-2.5 rounded-lg border border-green-500 text-green-700 hover:bg-green-50 transition-colors font-medium"
+                >
+                  ✅ Vote as Resolved ({issue.resolvedVotes?.length || 0}/3)
+                </button>
+                <p className="text-xs text-gray-400 mt-1 text-center">
+                  3 community members must vote to confirm resolution
+                </p>
+              </div>
+            )}
+            {issue.status === 'resolved' && (
+              <div className="mt-4 pt-4 border-t">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-center">
+                  <span className="text-green-700 font-medium text-sm">🎉 Issue Resolved by Community!</span>
                 </div>
               </div>
             )}
@@ -350,6 +408,93 @@ export default function IssueDetailPage() {
               </div>
               <p className="text-sm text-red-600 mt-2">
                 This issue requires immediate attention and has been flagged as critical.
+              </p>
+            </div>
+          )}
+
+          {/* Escalate - for long pending issues */}
+          {(issue.status === 'reported' || issue.status === 'verified') && (
+            <div className="card border-orange-200 bg-orange-50/50">
+              <h3 className="font-semibold text-orange-800 mb-2">⏳ Issue Not Resolved?</h3>
+              <p className="text-sm text-orange-700 mb-3">
+                File a formal complaint on the official government portal:
+              </p>
+              <div className="space-y-2">
+                <a
+                  href="https://pgportal.gov.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-2.5 bg-white rounded-lg border hover:border-blue-400 transition-colors text-sm"
+                >
+                  <span>🏛️</span>
+                  <div>
+                    <div className="font-medium text-gray-800">CPGRAMS</div>
+                    <div className="text-xs text-gray-500">pgportal.gov.in</div>
+                  </div>
+                </a>
+                <a
+                  href="https://swachhata.gov.in"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 p-2.5 bg-white rounded-lg border hover:border-green-400 transition-colors text-sm"
+                >
+                  <span>🧹</span>
+                  <div>
+                    <div className="font-medium text-gray-800">Swachhata</div>
+                    <div className="text-xs text-gray-500">swachhata.gov.in</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Delete / Close Issue */}
+          {session && issue.status !== 'closed' && (
+            <div className="card border-gray-200">
+              <h3 className="font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                {issue.status === 'resolved' ? (
+                  <><FiArchive className="w-4 h-4" /> Close Issue</>
+                ) : (
+                  <><FiTrash2 className="w-4 h-4" /> Delete Issue</>
+                )}
+              </h3>
+              <p className="text-xs text-gray-500 mb-3">
+                {issue.status === 'resolved'
+                  ? 'This resolved issue can be closed and archived. It will no longer appear in active listings.'
+                  : 'Only the reporter or an admin can delete an unresolved issue. This action cannot be undone.'}
+              </p>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className={`w-full text-sm px-4 py-2.5 rounded-lg border font-medium transition-colors flex items-center justify-center gap-2 disabled:opacity-50 ${
+                  issue.status === 'resolved'
+                    ? 'border-gray-300 text-gray-700 hover:bg-gray-50'
+                    : 'border-red-300 text-red-700 hover:bg-red-50'
+                }`}
+              >
+                {deleting ? (
+                  <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : issue.status === 'resolved' ? (
+                  <><FiArchive className="w-4 h-4" /> Close &amp; Archive</>
+                ) : (
+                  <><FiTrash2 className="w-4 h-4" /> Delete Issue</>
+                )}
+              </button>
+            </div>
+          )}
+
+          {/* Closed status indicator */}
+          {issue.status === 'closed' && (
+            <div className="card border-purple-200 bg-purple-50">
+              <div className="flex items-center gap-2 text-purple-700">
+                <FiArchive className="w-5 h-5" />
+                <span className="font-semibold">Issue Closed</span>
+              </div>
+              <p className="text-sm text-purple-600 mt-2">
+                This issue has been resolved and archived. It will be permanently removed after 15 days.
               </p>
             </div>
           )}

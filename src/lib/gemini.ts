@@ -2,8 +2,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY!);
 
-export const geminiModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-export const geminiVisionModel = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+export const geminiModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+export const geminiVisionModel = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 export async function analyzeIssueImage(imageBase64: string, mimeType: string) {
   const result = await geminiVisionModel.generateContent([

@@ -4,7 +4,16 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { FiUser, FiMail, FiLock, FiUserPlus } from 'react-icons/fi';
+import { FiUser, FiMail, FiLock, FiUserPlus, FiMapPin } from 'react-icons/fi';
+
+const indianStates = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+  'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand', 'Karnataka',
+  'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram',
+  'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu',
+  'Telangana', 'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+  'Delhi', 'Chandigarh', 'Puducherry', 'Jammu & Kashmir', 'Ladakh',
+];
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -14,6 +23,7 @@ export default function RegisterPage() {
     email: '',
     password: '',
     confirmPassword: '',
+    region: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,6 +44,7 @@ export default function RegisterPage() {
           name: formData.name,
           email: formData.email,
           password: formData.password,
+          region: formData.region,
         }),
       });
 
@@ -143,6 +154,28 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Your State / Region
+              </label>
+              <div className="relative">
+                <FiMapPin className="absolute left-3 top-3.5 text-gray-400 w-5 h-5" />
+                <select
+                  className="input-field pl-10"
+                  value={formData.region}
+                  onChange={(e) =>
+                    setFormData({ ...formData, region: e.target.value })
+                  }
+                  required
+                >
+                  <option value="">Select your state</option>
+                  {indianStates.map((state) => (
+                    <option key={state} value={state}>{state}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <button
               type="submit"
               disabled={loading}
@@ -166,6 +199,12 @@ export default function RegisterPage() {
             Already have an account?{' '}
             <Link href="/login" className="text-green-600 hover:text-green-700 font-medium">
               Sign in
+            </Link>
+          </p>
+          <p className="text-center text-sm text-gray-500 mt-2">
+            Are you a municipal authority?{' '}
+            <Link href="/admin/register" className="text-blue-600 hover:text-blue-700 font-medium">
+              Register as Authority
             </Link>
           </p>
         </div>

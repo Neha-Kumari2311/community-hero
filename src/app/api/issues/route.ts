@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 import connectDB from '@/lib/mongodb';
 import Issue from '@/models/Issue';
 import User from '@/models/User';
-import { analyzeIssueImage, getAISuggestions } from '@/lib/gemini';
+import { analyzeIssueImage } from '@/lib/gemini';
+import { uploadImage } from '@/lib/cloudinary';
 
 // GET - Fetch all issues with filters
 export async function GET(request: NextRequest) {
@@ -15,15 +16,32 @@ export async function GET(request: NextRequest) {
     const category = searchParams.get('category');
     const status = searchParams.get('status');
     const severity = searchParams.get('severity');
+    const region = searchParams.get('region');
+    const includeClosed = searchParams.get('includeClosed');
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
 
     const query: any = {};
     if (category && category !== 'all') query.category = category;
-    if (status && status !== 'all') query.status = status;
+    if (status && status !== 'all') {
+      query.status = status;
+    } else if (includeClosed !== 'true') {
+      // By default, exclude 'closed' issues from listings
+      query.status = { $ne: 'closed' };
+    }
     if (severity && severity !== 'all') query.severity = severity;
+    // Filter by region/state if provided
+    if (region && region !== 'all') query.region = region;
 
     const skip = (page - 1) * limit;
+
+    // Auto-cleanup: Permanently delete issues that have been closed for more than 15 days
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+    await Issue.deleteMany({
+      status: 'closed',
+      resolvedAt: { $lt: fifteenDaysAgo },
+    });
 
     const [issues, total] = await Promise.all([
       Issue.find(query)
@@ -77,10 +95,11 @@ export async function POST(request: NextRequest) {
 
     // AI Analysis - analyze image if provided
     let aiAnalysis: any = {};
+    let uploadedImageUrls: string[] = [];
 
     if (images && images.length > 0) {
       try {
-        // Extract base64 data from data URL
+        // Extract base64 data from data URL for AI analysis
         const imageData = images[0].split(',')[1];
         const mimeType = images[0].split(';')[0].split(':')[1];
         const imageAnalysis = await analyzeIssueImage(imageData, mimeType);
@@ -88,18 +107,26 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         console.error('Image analysis failed:', err);
       }
+
+      // Upload images to Cloudinary (if configured) or keep as-is
+      if (process.env.CLOUDINARY_CLOUD_NAME) {
+        for (const img of images) {
+          try {
+            const url = await uploadImage(img);
+            uploadedImageUrls.push(url);
+          } catch (err) {
+            console.error('Image upload failed, using original:', err);
+            uploadedImageUrls.push(img); // Fallback: keep base64
+          }
+        }
+      } else {
+        // No Cloudinary configured - store as-is (URLs or base64)
+        uploadedImageUrls = images;
+      }
     }
 
-    // Get AI suggestions for resolution
-    try {
-      const suggestions = await getAISuggestions(
-        description,
-        category || aiAnalysis.category || 'other'
-      );
-      aiAnalysis = { ...aiAnalysis, ...suggestions };
-    } catch (err) {
-      console.error('AI suggestions failed:', err);
-    }
+    // Get user's region to tag the issue
+    const userRegion = (session.user as any).region || '';
 
     // Create the issue
     const issue = await Issue.create({
@@ -107,8 +134,9 @@ export async function POST(request: NextRequest) {
       description,
       category: category || aiAnalysis.category || 'other',
       severity: severity || aiAnalysis.severity || 'medium',
-      images: images || [],
+      images: uploadedImageUrls,
       location,
+      region: userRegion,
       reportedBy: (session.user as any).id,
       aiAnalysis,
     });

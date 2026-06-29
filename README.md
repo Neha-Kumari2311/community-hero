@@ -1,198 +1,253 @@
-# 🦸 Community Hero - Hyperlocal Problem Solver
+# 🦸 CommunityHero
 
-An AI-powered platform that enables citizens to identify, report, validate, track, and resolve community issues through collaboration, data, and intelligent automation.
+**AI-powered civic issue reporting and resolution platform for Indian communities.**
 
-![Community Hero](https://img.shields.io/badge/Powered%20by-Google%20Gemini%20AI-blue?style=for-the-badge)
-![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge)
-![MongoDB](https://img.shields.io/badge/MongoDB-green?style=for-the-badge)
+CommunityHero empowers citizens to report, track, and resolve local infrastructure and civic issues using AI-powered image recognition, community verification, and gamification. It bridges the gap between citizens and municipal authorities through technology.
 
-## 🌟 Features
+---
 
-### Core Features
-- **📸 Image-Based Issue Reporting** - Upload photos of community issues
-- **🤖 AI-Powered Analysis** - Google Gemini AI automatically categorizes issues, detects severity, and suggests resolutions
-- **📍 Geo-Location** - Capture and display issue locations
-- **✅ Community Verification** - Crowd-sourced verification (3+ verifications = confirmed)
-- **📊 Real-Time Tracking** - Track issue status from reported → verified → in progress → resolved
-- **🏆 Gamification** - Earn points for reporting, verifying, commenting, and resolving issues
+## 🚀 Live Features
 
-### AI Capabilities (Google Gemini)
-- **Image Recognition** - Analyze uploaded photos to identify issue type, severity, and impact
-- **Auto-Categorization** - Automatically categorize issues into 10+ categories
-- **Priority Scoring** - AI assigns priority scores (1-10) based on severity and impact
-- **Resolution Suggestions** - AI provides step-by-step resolution recommendations
-- **Predictive Insights** - Dashboard shows trending issues, hotspot areas, and predictions
-- **Community Health Score** - AI-generated overall community health metric
+### 🤖 AI-Powered Issue Analysis (Google Gemini)
+- **Image Recognition** — Upload a photo of any civic issue (pothole, garbage, broken streetlight) and Gemini AI automatically:
+  - Identifies the issue category
+  - Determines severity level (low/medium/high/critical)
+  - Suggests the responsible government department
+  - Estimates community impact
+  - Provides step-by-step resolution recommendations
+  - Assigns a priority score (1-10)
 
-### Pages
-| Page | Description |
-|------|-------------|
-| `/` | Landing page with features overview |
-| `/register` | User registration |
-| `/login` | User authentication |
-| `/report` | Report new issue with AI image analysis |
-| `/issues` | Browse all issues with filters |
-| `/issues/[id]` | Issue detail with AI analysis sidebar |
-| `/dashboard` | AI-powered insights dashboard |
-| `/leaderboard` | Community heroes ranking |
+### 📊 AI-Powered Community Insights Dashboard
+- **Predictive Analytics** — Gemini AI analyzes all reported issues and provides:
+  - Trending issue categories
+  - Hotspot areas with recurring problems
+  - Resolution rate analysis
+  - Predictions for upcoming issues
+  - Community health score (1-100)
+  - Actionable recommendations
+
+### 🌬️ Real-Time Air Quality Index (AQI)
+- Live AQI data using Open-Meteo API (no API key needed)
+- Auto-detects user's location via browser geolocation
+- Shows PM2.5, PM10, NO₂, Ozone levels
+- Color-coded severity (Good → Hazardous)
+- Displayed on homepage and navbar badge
+
+### 💡 Daily Information & Tips
+- **Did You Know?** — Daily random facts via uselessfacts API
+- **Community Tip of the Day** — 30+ curated tips about environment, safety, water conservation, waste management, road safety
+- Changes daily based on day-of-year rotation
+
+### 🧠 Eco & Community Quiz
+- AI-generated quiz questions via Gemini API (when quota available)
+- Fallback: 20+ hardcoded community/environment-themed easy questions
+- Topics: recycling, water conservation, road safety, civic duties, pollution
+- Streak bonus scoring system
+- Random 10 questions per session from pool
+
+### 📸 Issue Reporting
+- Photo upload with AI auto-analysis
+- Manual category selection (pothole, water leakage, streetlight, waste, road damage, drainage, public property, safety hazard, pollution, other)
+- Location input with address
+- Video upload support
+- Auto-assigns region based on user's registered state
+
+### 🗺️ Interactive Map View
+- Leaflet-powered interactive map showing all issues
+- Custom colored markers based on severity (red=critical, orange=high, yellow=medium, blue=low)
+- Category emoji icons on markers
+- Click popup with issue details and "View Details" link
+- Filter by category
+- Auto-fits bounds to show all markers
+
+### 👥 Community Engagement
+- **Upvoting** — Support issues you've encountered
+- **Verification** — Confirm issues reported by others (+5 points)
+- **Comments** — Add context and updates to issues
+- **Resolved Voting** — Community confirms when issues are fixed
+
+### 🏆 Gamification System
+- **Points** — Earn points for reporting (10pts), verifying (5pts), getting upvotes
+- **Leaderboard** — Compete with other community members
+- **Badges** — First Report, Verifier, Community Helper, Guardian
+- **Daily/Weekly Challenges** — Time-limited goals with bonus rewards
+- **Rewards Store** — Redeem points for:
+  - Bronze/Silver/Gold certificates
+  - Plant a tree in your name
+  - Local shop discount vouchers
+  - Community recognition badges
+
+### 🔐 Role-Based Access (Admin vs User)
+- **Citizens**: Report issues, earn points, participate in challenges/quiz/rewards
+- **Admins (Municipality Officers)**: Dedicated admin panel with:
+  - Priority-sorted issue management
+  - Status updates (reported → verified → in_progress → resolved → closed)
+  - Department assignment
+  - Issue escalation
+  - Different navbar with "Admin Panel" link and 🛡️ Admin badge
+
+### 🌍 Region-Based Filtering
+- Users select their state during registration (all Indian states + UTs)
+- Issues are automatically tagged with the reporter's region
+- Users only see issues from their own state
+- Admins only manage issues in their jurisdiction
+- Issues auto-filter on the issues page and map
+
+### 🔄 Auto-Cleanup
+- Issues with status "closed" are automatically deleted after 15 days
+- Keeps the database clean and relevant
+
+---
 
 ## 🛠️ Tech Stack
 
-| Technology | Purpose |
-|-----------|---------|
-| **Next.js 15** | Full-stack React framework (App Router) |
-| **TypeScript** | Type-safe development |
-| **Google Gemini AI** | Image analysis, categorization, insights |
-| **MongoDB + Mongoose** | Database for issues and users |
-| **NextAuth.js** | Authentication (credentials-based) |
-| **Tailwind CSS** | Styling and responsive design |
-| **React Hot Toast** | Notifications |
+| Layer | Technology |
+|-------|-----------|
+| Frontend | Next.js 15 (App Router), React, TypeScript |
+| Styling | Tailwind CSS |
+| Backend | Next.js API Routes (serverless) |
+| Database | MongoDB Atlas (Mongoose ODM) |
+| Authentication | NextAuth.js (Credentials provider, JWT sessions) |
+| AI | Google Gemini 2.0 Flash (image analysis, insights, quiz) |
+| Maps | Leaflet.js (OpenStreetMap tiles) |
+| AQI Data | Open-Meteo Air Quality API |
+| Notifications | react-hot-toast |
+| Icons | react-icons (Feather Icons) |
 
-## 🚀 Getting Started
-
-### Prerequisites
-- Node.js 18+ (recommended 20+)
-- MongoDB (local or MongoDB Atlas)
-- Google AI Studio API Key
-
-### 1. Clone the repository
-```bash
-git clone https://github.com/Neha-Kumari2311/community-hero.git
-cd community-hero
-```
-
-### 2. Install dependencies
-```bash
-npm install
-```
-
-### 3. Set up environment variables
-```bash
-cp .env.example .env.local
-```
-
-Edit `.env.local` and add your:
-- **Google AI API Key** - Get from [Google AI Studio](https://aistudio.google.com/app/apikey)
-- **MongoDB URI** - Local or [MongoDB Atlas](https://www.mongodb.com/atlas)
-- **NextAuth Secret** - Any random string (use `openssl rand -base64 32`)
-
-### 4. Start MongoDB (if local)
-```bash
-mongod
-```
-
-### 5. Run the development server
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) to see the app.
+---
 
 ## 📁 Project Structure
 
 ```
 community-hero/
+├── scripts/seed.js          # Database seeding script
 ├── src/
 │   ├── app/
-│   │   ├── api/
-│   │   │   ├── auth/          # Authentication endpoints
-│   │   │   ├── issues/        # Issue CRUD + AI analysis
-│   │   │   ├── insights/      # AI-powered dashboard data
-│   │   │   └── leaderboard/   # User rankings
-│   │   ├── dashboard/         # AI insights page
-│   │   ├── issues/            # Issues listing & detail
-│   │   ├── leaderboard/       # Gamification page
-│   │   ├── login/             # Authentication
-│   │   ├── register/          # Registration
-│   │   ├── report/            # Report issue (with AI)
-│   │   ├── layout.tsx         # Root layout
-│   │   ├── page.tsx           # Landing page
-│   │   └── providers.tsx      # Context providers
+│   │   ├── page.tsx         # Homepage (AQI, tips, features)
+│   │   ├── login/           # Login page
+│   │   ├── register/        # User registration (with state selection)
+│   │   ├── report/          # Issue reporting with AI analysis
+│   │   ├── issues/          # Issues list with filters
+│   │   ├── issues/[id]/     # Single issue detail page
+│   │   ├── map/             # Interactive map view
+│   │   ├── dashboard/       # Community insights (AI-powered)
+│   │   ├── leaderboard/     # Points ranking
+│   │   ├── challenges/      # Daily/weekly challenges
+│   │   ├── rewards/         # Points redemption store
+│   │   ├── quiz/            # Eco & community quiz
+│   │   ├── admin/dashboard/ # Admin issue management panel
+│   │   ├── admin/register/  # Admin registration
+│   │   └── api/             # API routes
+│   │       ├── auth/        # NextAuth + register
+│   │       ├── issues/      # CRUD + filtering
+│   │       ├── insights/    # AI community insights
+│   │       ├── leaderboard/ # Points ranking
+│   │       ├── rewards/     # Points & redemption
+│   │       └── quiz/        # AI quiz generation
 │   ├── components/
-│   │   └── Navbar.tsx         # Navigation bar
+│   │   ├── Navbar.tsx       # Navigation (role-aware)
+│   │   └── MapView.tsx      # Leaflet map component
 │   ├── lib/
-│   │   ├── gemini.ts          # Google Gemini AI integration
-│   │   └── mongodb.ts         # Database connection
+│   │   ├── gemini.ts        # Google Gemini AI helpers
+│   │   └── mongodb.ts       # MongoDB connection
 │   └── models/
-│       ├── Issue.ts           # Issue schema
-│       └── User.ts            # User schema
-├── .env.example
-├── .env.local
-├── package.json
-├── tailwind.config.ts
-└── README.md
+│       ├── Issue.ts         # Issue schema
+│       └── User.ts          # User schema
 ```
-
-## 🤖 How AI is Used (Google AI Studio / Gemini)
-
-### 1. Image Analysis (`/api/issues/analyze`)
-When a user uploads a photo:
-- Gemini Vision analyzes the image
-- Returns: category, severity, description, suggested title, impact, department
-
-### 2. Resolution Suggestions (`/api/issues` POST)
-When creating an issue:
-- Gemini generates priority score, resolution steps, estimated time, resources needed
-
-### 3. Community Insights (`/api/insights`)
-For the dashboard:
-- Gemini analyzes all issues to find trends, hotspots, predictions, and recommendations
-- Generates community health score (0-100)
-
-## 🎮 Gamification System
-
-| Action | Points |
-|--------|--------|
-| Report an issue | +10 |
-| Verify an issue | +5 |
-| Resolve an issue | +25 |
-| Add a comment | +2 |
-
-## 🌐 Deployment
-
-### Deploy to Vercel (Recommended)
-
-1. Push code to GitHub
-2. Go to [vercel.com](https://vercel.com)
-3. Import your GitHub repository
-4. Add environment variables in Vercel dashboard
-5. Deploy!
-
-### Environment Variables for Production
-```
-GOOGLE_AI_API_KEY=your_key
-MONGODB_URI=your_atlas_connection_string
-NEXTAUTH_SECRET=your_secret
-NEXTAUTH_URL=https://your-domain.vercel.app
-NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
-```
-
-## 📋 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/[...nextauth]` | Login/session |
-| GET | `/api/issues` | List issues (with filters) |
-| POST | `/api/issues` | Create issue (with AI) |
-| GET | `/api/issues/[id]` | Get single issue |
-| PATCH | `/api/issues/[id]` | Update (upvote/verify/comment/status) |
-| POST | `/api/issues/analyze` | AI image analysis |
-| GET | `/api/insights` | AI-generated insights |
-| GET | `/api/leaderboard` | User rankings |
-
-## 👥 Contributing
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-Built with ❤️ by [Neha Kumari](https://github.com/Neha-Kumari2311) | Powered by Google Gemini AI
+## 🏃‍♂️ Getting Started
+
+### Prerequisites
+- Node.js 18+
+- MongoDB Atlas account (or local MongoDB)
+- Google AI Studio API key (for Gemini)
+
+### Installation
+
+```bash
+git clone <repo-url>
+cd community-hero
+npm install
+```
+
+### Environment Setup
+
+Copy `.env.example` to `.env.local` and fill in:
+
+```env
+GOOGLE_AI_API_KEY=your_gemini_api_key
+MONGODB_URI=mongodb+srv://...
+NEXTAUTH_SECRET=your_random_secret
+NEXTAUTH_URL=http://localhost:3000
+```
+
+### Seed Database
+
+```bash
+node scripts/seed.js
+```
+
+This creates 5 test citizens, 2 admins, and 6 sample issues with images.
+
+### Run Development Server
+
+```bash
+npm run dev
+```
+
+Open http://localhost:3000
+
+### Test Accounts
+
+| Role | Email | Password |
+|------|-------|----------|
+| Citizen | ansh@test.com | password123 |
+| Citizen | priya@test.com | password123 |
+| Admin | admin@municipality.gov | password123 |
+
+---
+
+## 🚀 Deployment Recommendations
+
+### Best Option: **Vercel** (Recommended)
+- **Why**: Next.js is built by Vercel. Zero-config deployment, automatic HTTPS, edge functions, preview deployments per PR.
+- **Free tier**: Generous for this project size
+- **Steps**: Connect GitHub repo → auto-deploys on push
+- **Environment variables**: Set in Vercel dashboard
+
+### Alternative Options:
+
+| Platform | Pros | Cons |
+|----------|------|------|
+| **Vercel** | Best Next.js support, free tier, instant deploys | Cold starts on serverless |
+| **Railway** | Easy MongoDB + Next.js, good free tier | Less Next.js optimization |
+| **Render** | Free static + web service | Slower cold starts |
+| **AWS Amplify** | Scalable, good for production | More complex setup |
+| **Netlify** | Good for static, supports Next.js | Less optimal for API routes |
+
+### Database: **MongoDB Atlas** (already in use)
+- Free M0 cluster (512MB)
+- Already configured and working
+
+### Recommended Production Stack:
+1. **Vercel** — Frontend + API routes
+2. **MongoDB Atlas** — Database (already set up)
+3. **Google AI Studio** — Gemini API (free tier available)
+
+---
+
+## ⚠️ Known Limitations
+
+1. **Gemini API quota** — Free tier has rate limits (requests per minute/day). Quiz falls back to hardcoded questions when quota exceeded.
+2. **No actual government integration** — Issues are tracked within the platform only; not submitted to any government portal.
+3. **AQI requires location permission** — Falls back to Delhi coordinates if denied.
+4. **Image upload** — Images are stored as base64 in MongoDB (not ideal for production; should use cloud storage like S3/Cloudinary).
+5. **No email notifications** — No email alerts when issues are updated.
+
+---
+
+## 📄 License
+
+MIT © 2024 CommunityHero

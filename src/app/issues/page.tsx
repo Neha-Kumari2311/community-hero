@@ -51,6 +51,12 @@ export default function IssuesPage() {
         limit: '12',
       });
 
+      // Filter by user's region if logged in
+      const userRegion = (session?.user as any)?.region;
+      if (userRegion) {
+        params.set('region', userRegion);
+      }
+
       const res = await fetch(`/api/issues?${params}`);
       const data = await res.json();
 
@@ -223,11 +229,11 @@ export default function IssuesPage() {
             <div key={issue._id} className="card hover:shadow-lg transition-all duration-200 flex flex-col">
               {/* Image */}
               {issue.images && issue.images.length > 0 && (
-                <div className="relative -mx-6 -mt-6 mb-4">
+                <div className="relative -mx-6 -mt-6 mb-3">
                   <img
                     src={issue.images[0]}
                     alt={issue.title}
-                    className="w-full h-40 object-cover rounded-t-xl"
+                    className="w-full h-52 object-cover rounded-t-xl"
                   />
                   <div className="absolute top-2 left-2">
                     <span className={`badge ${getSeverityColor(issue.severity)}`}>
@@ -259,12 +265,12 @@ export default function IssuesPage() {
                 </div>
 
                 <Link href={`/issues/${issue._id}`}>
-                  <h3 className="font-semibold text-gray-800 hover:text-green-600 transition-colors line-clamp-2">
+                  <h3 className="font-semibold text-gray-800 hover:text-green-600 transition-colors line-clamp-1 text-sm">
                     {issue.title}
                   </h3>
                 </Link>
 
-                <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                <p className="text-xs text-gray-600 mt-1 line-clamp-1">
                   {issue.description}
                 </p>
 
@@ -301,10 +307,13 @@ export default function IssuesPage() {
                   <span>{issue.verifiedBy?.length || 0}</span>
                 </button>
 
-                <div className="flex items-center gap-1 text-sm text-gray-500">
+                <a
+                  href={`/issues/${issue._id}`}
+                  className="flex items-center gap-1 text-sm text-gray-500 hover:text-purple-600 transition-colors"
+                >
                   <FiMessageSquare className="w-4 h-4" />
                   <span>{issue.comments?.length || 0}</span>
-                </div>
+                </a>
 
                 <span className="text-xs text-gray-400">
                   by {issue.reportedBy?.name?.split(' ')[0] || 'Anonymous'}

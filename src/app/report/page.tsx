@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { FiCamera, FiMapPin, FiCpu, FiSend, FiX, FiUpload } from 'react-icons/fi';
+import { FiCamera, FiMapPin, FiCpu, FiSend, FiX, FiUpload, FiVideo } from 'react-icons/fi';
 
 const categories = [
   { value: 'pothole', label: '🕳️ Pothole' },
@@ -23,10 +23,13 @@ export default function ReportIssuePage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
   const [loading, setLoading] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [videoPreview, setVideoPreview] = useState<string | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
   const [aiAnalysis, setAiAnalysis] = useState<any>(null);
 
   const [formData, setFormData] = useState({
@@ -98,13 +101,32 @@ export default function ReportIssuePage() {
   const getCurrentLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
+          const { latitude, longitude } = position.coords;
           setFormData((prev) => ({
             ...prev,
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-            address: prev.address || `Lat: ${position.coords.latitude.toFixed(4)}, Lng: ${position.coords.longitude.toFixed(4)}`,
+            lat: latitude,
+            lng: longitude,
           }));
+          // Reverse geocode to get address text (free Nominatim API)
+          try {
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=16`
+            );
+            const data = await res.json();
+            if (data?.display_name) {
+              setFormData((prev) => ({
+                ...prev,
+                address: prev.address || data.display_name,
+              }));
+            }
+          } catch {
+            // Fallback if geocoding fails
+            setFormData((prev) => ({
+              ...prev,
+              address: prev.address || `Near ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`,
+            }));
+          }
           toast.success('📍 Location captured!');
         },
         (error) => {
@@ -258,6 +280,69 @@ export default function ReportIssuePage() {
           )}
         </div>
 
+        {/* Video Upload Section */}
+        <div className="card">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <FiVideo className="text-blue-600" />
+            Upload Video (Optional)
+          </h2>
+
+          {!videoPreview ? (
+            <div
+              onClick={() => videoInputRef.current?.click()}
+              className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-blue-500 hover:bg-blue-50 transition-all"
+            >
+              <FiVideo className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+              <p className="text-gray-600 font-medium">
+                Click to upload a video
+              </p>
+              <p className="text-sm text-gray-400 mt-1">
+                MP4, WebM up to 50MB. Provide video evidence of the issue.
+              </p>
+            </div>
+          ) : (
+            <div className="relative">
+              <video
+                src={videoPreview}
+                controls
+                className="w-full h-64 rounded-xl bg-black"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setVideoPreview(null);
+                  setVideoFile(null);
+                }}
+                className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+              >
+                <FiX className="w-4 h-4" />
+              </button>
+              <div className="mt-2 text-xs text-gray-500 flex items-center gap-1">
+                <FiVideo className="w-3 h-3" />
+                {videoFile?.name} ({(videoFile?.size ? videoFile.size / (1024 * 1024) : 0).toFixed(1)}MB)
+              </div>
+            </div>
+          )}
+
+          <input
+            ref={videoInputRef}
+            type="file"
+            accept="video/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+              if (file.size > 50 * 1024 * 1024) {
+                toast.error('Video must be less than 50MB');
+                return;
+              }
+              setVideoFile(file);
+              setVideoPreview(URL.createObjectURL(file));
+              toast.success('🎬 Video attached!');
+            }}
+            className="hidden"
+          />
+        </div>
+
         {/* Issue Details */}
         <div className="card">
           <h2 className="text-lg font-semibold mb-4">Issue Details</h2>
@@ -360,8 +445,8 @@ export default function ReportIssuePage() {
             </button>
 
             {formData.lat !== 0 && (
-              <p className="text-xs text-gray-500">
-                Coordinates: {formData.lat.toFixed(4)}, {formData.lng.toFixed(4)}
+              <p className="text-xs text-green-600 font-medium">
+                ✅ Location captured successfully
               </p>
             )}
           </div>

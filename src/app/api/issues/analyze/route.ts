@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 import { analyzeIssueImage } from '@/lib/gemini';
 
 // POST - Analyze an uploaded image with AI
@@ -29,6 +29,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ analysis });
   } catch (error: any) {
+    console.error('Analyze image error:', error?.message || error);
     return NextResponse.json(
       { error: error.message || 'Failed to analyze image' },
       { status: 500 }

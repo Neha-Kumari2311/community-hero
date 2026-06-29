@@ -5,6 +5,9 @@ export interface IUser {
   name: string;
   email: string;
   password: string;
+  role: 'user' | 'admin';
+  region?: string;
+  department?: string;
   avatar?: string;
   points: number;
   badges: string[];
@@ -32,6 +35,19 @@ const UserSchema = new Schema<IUser>(
       type: String,
       required: [true, 'Please provide a password'],
       minlength: 6,
+    },
+    role: {
+      type: String,
+      enum: ['user', 'admin'],
+      default: 'user',
+    },
+    region: {
+      type: String,
+      default: '',
+    },
+    department: {
+      type: String,
+      default: '',
     },
     avatar: {
       type: String,
