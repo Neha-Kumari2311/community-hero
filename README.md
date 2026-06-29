@@ -1,4 +1,4 @@
-# 🦸 CommunityHero
+#  CommunityHero
 
 **AI-powered civic issue reporting and resolution platform for Indian communities.**
 
@@ -6,7 +6,7 @@ CommunityHero empowers citizens to report, track, and resolve local infrastructu
 
 ---
 
-## 🚀 Live Features
+##  Live Features
 
 ### 🤖 AI-Powered Issue Analysis (Google Gemini)
 - **Image Recognition** — Upload a photo of any civic issue (pothole, garbage, broken streetlight) and Gemini AI automatically:
@@ -17,7 +17,7 @@ CommunityHero empowers citizens to report, track, and resolve local infrastructu
   - Provides step-by-step resolution recommendations
   - Assigns a priority score (1-10)
 
-### 📊 AI-Powered Community Insights Dashboard
+### AI-Powered Community Insights Dashboard
 - **Predictive Analytics** — Gemini AI analyzes all reported issues and provides:
   - Trending issue categories
   - Hotspot areas with recurring problems
@@ -26,33 +26,33 @@ CommunityHero empowers citizens to report, track, and resolve local infrastructu
   - Community health score (1-100)
   - Actionable recommendations
 
-### 🌬️ Real-Time Air Quality Index (AQI)
+###  Real-Time Air Quality Index (AQI)
 - Live AQI data using Open-Meteo API (no API key needed)
 - Auto-detects user's location via browser geolocation
 - Shows PM2.5, PM10, NO₂, Ozone levels
 - Color-coded severity (Good → Hazardous)
 - Displayed on homepage and navbar badge
 
-### 💡 Daily Information & Tips
+###  Daily Information & Tips
 - **Did You Know?** — Daily random facts via uselessfacts API
 - **Community Tip of the Day** — 30+ curated tips about environment, safety, water conservation, waste management, road safety
 - Changes daily based on day-of-year rotation
 
-### 🧠 Eco & Community Quiz
+### Eco & Community Quiz
 - AI-generated quiz questions via Gemini API (when quota available)
 - Fallback: 20+ hardcoded community/environment-themed easy questions
 - Topics: recycling, water conservation, road safety, civic duties, pollution
 - Streak bonus scoring system
 - Random 10 questions per session from pool
 
-### 📸 Issue Reporting
+### Issue Reporting
 - Photo upload with AI auto-analysis
 - Manual category selection (pothole, water leakage, streetlight, waste, road damage, drainage, public property, safety hazard, pollution, other)
 - Location input with address
 - Video upload support
 - Auto-assigns region based on user's registered state
 
-### 🗺️ Interactive Map View
+###  Interactive Map View
 - Leaflet-powered interactive map showing all issues
 - Custom colored markers based on severity (red=critical, orange=high, yellow=medium, blue=low)
 - Category emoji icons on markers
@@ -60,13 +60,13 @@ CommunityHero empowers citizens to report, track, and resolve local infrastructu
 - Filter by category
 - Auto-fits bounds to show all markers
 
-### 👥 Community Engagement
+###  Community Engagement
 - **Upvoting** — Support issues you've encountered
 - **Verification** — Confirm issues reported by others (+5 points)
 - **Comments** — Add context and updates to issues
 - **Resolved Voting** — Community confirms when issues are fixed
 
-### 🏆 Gamification System
+### Gamification System
 - **Points** — Earn points for reporting (10pts), verifying (5pts), getting upvotes
 - **Leaderboard** — Compete with other community members
 - **Badges** — First Report, Verifier, Community Helper, Guardian
@@ -77,7 +77,7 @@ CommunityHero empowers citizens to report, track, and resolve local infrastructu
   - Local shop discount vouchers
   - Community recognition badges
 
-### 🔐 Role-Based Access (Admin vs User)
+###  Role-Based Access (Admin vs User)
 - **Citizens**: Report issues, earn points, participate in challenges/quiz/rewards
 - **Admins (Municipality Officers)**: Dedicated admin panel with:
   - Priority-sorted issue management
@@ -86,20 +86,20 @@ CommunityHero empowers citizens to report, track, and resolve local infrastructu
   - Issue escalation
   - Different navbar with "Admin Panel" link and 🛡️ Admin badge
 
-### 🌍 Region-Based Filtering
+###  Region-Based Filtering
 - Users select their state during registration (all Indian states + UTs)
 - Issues are automatically tagged with the reporter's region
 - Users only see issues from their own state
 - Admins only manage issues in their jurisdiction
 - Issues auto-filter on the issues page and map
 
-### 🔄 Auto-Cleanup
+###  Auto-Cleanup
 - Issues with status "closed" are automatically deleted after 15 days
 - Keeps the database clean and relevant
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
@@ -116,7 +116,7 @@ CommunityHero empowers citizens to report, track, and resolve local infrastructu
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 community-hero/
@@ -157,7 +157,7 @@ community-hero/
 
 ---
 
-## 🏃‍♂️ Getting Started
+##  Getting Started
 
 ### Prerequisites
 - Node.js 18+
@@ -209,45 +209,11 @@ Open http://localhost:3000
 
 ---
 
-## 🚀 Deployment Recommendations
-
-### Best Option: **Vercel** (Recommended)
-- **Why**: Next.js is built by Vercel. Zero-config deployment, automatic HTTPS, edge functions, preview deployments per PR.
-- **Free tier**: Generous for this project size
-- **Steps**: Connect GitHub repo → auto-deploys on push
-- **Environment variables**: Set in Vercel dashboard
-
-### Alternative Options:
-
-| Platform | Pros | Cons |
-|----------|------|------|
-| **Vercel** | Best Next.js support, free tier, instant deploys | Cold starts on serverless |
-| **Railway** | Easy MongoDB + Next.js, good free tier | Less Next.js optimization |
-| **Render** | Free static + web service | Slower cold starts |
-| **AWS Amplify** | Scalable, good for production | More complex setup |
-| **Netlify** | Good for static, supports Next.js | Less optimal for API routes |
-
-### Database: **MongoDB Atlas** (already in use)
-- Free M0 cluster (512MB)
-- Already configured and working
-
-### Recommended Production Stack:
-1. **Vercel** — Frontend + API routes
-2. **MongoDB Atlas** — Database (already set up)
-3. **Google AI Studio** — Gemini API (free tier available)
-
----
-
 ## ⚠️ Known Limitations
 
 1. **Gemini API quota** — Free tier has rate limits (requests per minute/day). Quiz falls back to hardcoded questions when quota exceeded.
-2. **No actual government integration** — Issues are tracked within the platform only; not submitted to any government portal.
-3. **AQI requires location permission** — Falls back to Delhi coordinates if denied.
-4. **Image upload** — Images are stored as base64 in MongoDB (not ideal for production; should use cloud storage like S3/Cloudinary).
-5. **No email notifications** — No email alerts when issues are updated.
 
----
+2. **AQI requires location permission** — Falls back to Delhi coordinates if denied.
 
-## 📄 License
 
-MIT © 2024 CommunityHero
+
