@@ -8,9 +8,9 @@ import Navbar from '@/components/Navbar';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Community Hero - Hyperlocal Problem Solver',
+  title: 'FixMyCity - AI-Powered Civic Issue Reporting',
   description:
-    'AI-powered platform for citizens to identify, report, validate, track, and resolve community issues.',
+    'AI-powered platform for citizens to identify, report, validate, track, and resolve community issues. Your City, Your Voice.',
 };
 
 export default function RootLayout({

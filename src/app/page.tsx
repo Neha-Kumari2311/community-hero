@@ -294,10 +294,10 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32">
           <div className="text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Be Your Community&apos;s <span className="text-yellow-300">Hero</span>
+              <span className="text-yellow-300">FixMyCity</span> — Your City, Your Voice
             </h1>
             <p className="text-xl md:text-2xl text-green-100 mb-6 max-w-3xl mx-auto">
-              AI-powered platform to identify, report, and resolve local issues.
+              AI-powered platform to identify, report, and resolve local civic issues.
               Snap a photo, let AI categorize it, and track resolution in real-time.
             </p>
 
@@ -461,14 +461,14 @@ export default function Home() {
                 <span className="text-white font-bold text-lg">C</span>
               </div>
               <span className="text-xl font-bold text-white">
-                Community<span className="text-green-400">Hero</span>
+                FixMy<span className="text-green-400">City</span>
               </span>
             </div>
             <p className="text-sm">
               Built with ❤️ using Next.js, Google Gemini AI & MongoDB
             </p>
             <p className="text-xs mt-2">
-              © 2024 CommunityHero. Empowering communities through technology.
+              © 2025 FixMyCity. Empowering citizens through AI-powered civic technology.
             </p>
           </div>
         </div>

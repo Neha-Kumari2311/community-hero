@@ -81,7 +81,7 @@ export default function Navbar() {
                 <span className="text-white font-bold text-lg">C</span>
               </div>
               <span className="text-xl font-bold text-gray-800 hidden sm:inline">
-                Community<span className="text-green-600">Hero</span>
+                FixMy<span className="text-green-600">City</span>
               </span>
             </Link>
             <AQIBadge />
