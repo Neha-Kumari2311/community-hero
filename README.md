@@ -8,7 +8,7 @@ CommunityHero empowers citizens to report, track, and resolve local infrastructu
 
 ##  Live Features
 
-### 🤖 AI-Powered Issue Analysis (Google Gemini)
+### AI-Powered Issue Analysis (Google Gemini)
 - **Image Recognition** — Upload a photo of any civic issue (pothole, garbage, broken streetlight) and Gemini AI automatically:
   - Identifies the issue category
   - Determines severity level (low/medium/high/critical)
@@ -209,7 +209,7 @@ Open http://localhost:3000
 
 ---
 
-## ⚠️ Known Limitations
+##  Known Limitations
 
 1. **Gemini API quota** — Free tier has rate limits (requests per minute/day). Quiz falls back to hardcoded questions when quota exceeded.
 
