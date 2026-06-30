@@ -18,9 +18,9 @@ const openai = new OpenAI({
 });
 
 // Primary model (fast and capable)
-const PRIMARY_MODEL = 'google/gemini-2.0-flash-001';
+const PRIMARY_MODEL = 'google/gemini-2.5-flash';
 // Fallback model (cheaper/lighter)
-const FALLBACK_MODEL = 'google/gemini-2.0-flash-lite-001';
+const FALLBACK_MODEL = 'google/gemini-2.5-flash-lite';
 
 /**
  * Helper: Generate content with automatic retry and fallback model
