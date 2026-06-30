@@ -87,6 +87,10 @@ export default function ReportIssuePage() {
             severity: data.analysis.severity || prev.severity,
           }));
           toast.success('🤖 AI analysis complete!');
+        } else if (res.status === 429) {
+          toast.error('⏳ AI quota exceeded for today. Please fill details manually.', { duration: 5000 });
+        } else if (data.error) {
+          toast.error(data.error);
         }
       } catch (error) {
         console.error('AI analysis failed:', error);

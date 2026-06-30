@@ -1,9 +1,15 @@
 import { NextResponse } from 'next/server';
-import { geminiModel } from '@/lib/gemini';
+import { generateText } from '@/lib/gemini';
 
 export async function GET() {
   try {
-    const result = await geminiModel.generateContent(`
+    // Check if API key is configured
+    if (!process.env.OPENROUTER_API_KEY) {
+      console.error('Quiz: OPENROUTER_API_KEY is missing');
+      throw new Error('AI service not configured - using fallback questions');
+    }
+
+    const text = await generateText(`
       Generate 10 multiple-choice quiz questions about community living, civic responsibility, environment awareness, waste management, road safety, water conservation, and public hygiene. 
       
       Rules:
@@ -28,7 +34,6 @@ export async function GET() {
       Generate exactly 10 questions. Only respond with the JSON array, nothing else.
     `);
 
-    const text = result.response.text();
     const cleanedText = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
     const questions = JSON.parse(cleanedText);
 
